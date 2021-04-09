@@ -1,4 +1,3 @@
-alex@~/holbertonschool-blockchain/blockchain/v0.1$ cat test/blockchain_create-main.c
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,11 +8,7 @@ alex@~/holbertonschool-blockchain/blockchain/v0.1$ cat test/blockchain_create-ma
 void _blockchain_print(blockchain_t const *blockchain);
 void _blockchain_destroy(blockchain_t *blockchain);
 
-/**
- * main - Entry point
- *
- * Return: EXIT_SUCCESS or EXIT_FAILURE
- */
+
 int main(void)
 {
     blockchain_t *blockchain;
@@ -38,8 +33,7 @@ int main(void)
 
     return (EXIT_SUCCESS);
 }
-alex@~/holbertonschool-blockchain/blockchain/v0.1$ gcc -Wall -Wextra -Werror -pedantic -I. -o blockchain_create-test blockchain_create.c test/blockchain_create-main.c provided/_blockchain_print.c provided/_blockchain_destroy.c -L../../crypto -lhblk_crypto -lllist -lssl -lcrypto -pthread
-alex@~/holbertonschool-blockchain/blockchain/v0.1$ ./blockchain_create-test
+
 Blockchain: {
     chain [1]: [
         Block: {
@@ -58,4 +52,4 @@ Blockchain: {
         }
     ]
 }
-alex@~/holbertonschool-blockchain/blockchain/v0.1$
+
