@@ -34,22 +34,5 @@ int main(void)
     return (EXIT_SUCCESS);
 }
 
-Blockchain: {
-    chain [1]: [
-        Block: {
-            info: {
-                index: 0,
-                difficulty: 0,
-                timestamp: 1537578000,
-                nonce: 0,
-                prev_hash: 0000000000000000000000000000000000000000000000000000000000000000
-            },
-            data: {
-                buffer: "Holberton School",
-                len: 16
-            },
-            hash: c52c26c8b5461639635d8edf2a97d48d0c8e0009c817f2b1d3d7ff2f04515803
-        }
-    ]
-}
+
 
