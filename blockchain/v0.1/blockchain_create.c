@@ -1,4 +1,4 @@
-blockchain* new_chain() {
+blockchain_t *blockchain_create(void){
 
     blockchain* in_chain = malloc(sizeof(blockchain));
 
