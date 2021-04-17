@@ -1,6 +1,14 @@
-
 #include "hblk_crypto.h"
 
+/**
+ * ec_verify - verify the signature of a given set of bytes using public key
+ * @key: pointer to EC_KEY struct containing public key
+ * @msg: pointer to characters to verify signature of
+ * @msglen: len of msg
+ * @sig: pointer to signature to check
+ *
+ * Return: 1 if signature valid, 0 if not
+ */
 int ec_verify(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 		sig_t const *sig)
 {
