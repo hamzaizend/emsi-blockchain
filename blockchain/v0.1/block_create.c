@@ -1,7 +1,7 @@
 #include "openssl/crypto.h"
 
 struct block{
-  unsigned char prevHash[SHA256_DIGEST_LENGTH];
+  unsigned char prev_Hash[SHA256_DIGEST_LENGTH];
   int blockData;
   struct block *link;
 }*head;
@@ -9,7 +9,7 @@ struct block{
 void addBlock(int data){
   if(head == null){
     head = malloc(sizeof(struct block));
-    SHA256("",sizeof(""),head->prevHash);
+    SHA256("",sizeof(""),head->prev_Hash);
     head->blockData=data;
     return ;
   }
@@ -19,5 +19,5 @@ void addBlock(int data){
   struct block *newBlock=malloc(sizeof(struct block));
   currentBlock->link=newBlock;
   newBlock->blockData=data;
-  SHA256(toString(*currentBlock),sizeof(*currentBlock),newBlock->prevHash);
+  SHA256(toString(*currentBlock),sizeof(*currentBlock),newBlock->prev_Hash);
 }
