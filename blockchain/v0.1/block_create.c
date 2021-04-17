@@ -1,5 +1,11 @@
 #include "openssl/crypto.h"
 
+struct block{
+  unsigned char prevHash[SHA256_DIGEST_LENGTH];
+  int blockData;
+  struct block *link;
+}*head;
+
 void addBlock(int data){
   if(head == null){
     head = malloc(sizeof(struct block));
