@@ -1,47 +1,38 @@
+#include "blockchain.h"
+#define GENESIS_TIMESTAMP 1537578000
+#define GENESIS_DATA "Holberton School"
+#define GENESIS_DATA_LEN 16
+#define GENESIS_HASH "\xc5\x2c\x26\xc8\xb5\x46\x16\x39\x63\x5d\x8e\xdf\x2a\x97\xd4\x8d\x0c\x8e\x00\x09\xc8\x17\xf2\xb1\xd3\xd7\xff\x2f\x04\x51\x58\x03"
+/**Create a blockchain
+*The Blockchain must contain one block upon creation. This block is called the Genesis Block. Its content is static*/
 blockchain_t *blockchain_create(void){
-
-    blockchain* in_chain = malloc(sizeof(blockchain));
-
-    in_chain->head = blink_create();
-    in_chain->head->data.time = 0;
-    in_chain->head->data.proof = 100;
-    in_chain->head->data.trans_list_length = 0;
-    memset(in_chain->head->data.trans_list,0, sizeof(in_chain->head->data.trans_list));
-    memset(in_chain->head->data.posts,0, sizeof(in_chain->head->data.posts));
-
-    for(int i = 0; i < BLOCK_DATA_SIZE; i++) {
-        in_chain->head->data.posts[i].data = '0';
-    }
-    in_chain->head->data.posts_list_length = 0;
-
-
-    in_chain->last_proof_of_work = 100;
-    memset(in_chain->trans_list, 0, sizeof(in_chain->trans_list));
-
-    memset(in_chain->new_posts, 0, sizeof(in_chain->new_posts));
-
-    for(int i = 0; i < BLOCK_DATA_SIZE; i++) {
-        in_chain->new_posts[i].data = '0';
-        in_chain->new_posts[i].poster[0] = '0';
-        in_chain->new_posts[i].signature[0] = '0';
-    }
-
-    hash_block(in_chain->last_hash, &in_chain->head->data);
-    
-    in_chain->trans_index = 0;
-    in_chain->post_index = 0;
-    in_chain->length = 0;
-
-    in_chain->quickledger = dict_create();
-    in_chain->verified = dict_create();
-
-    in_chain->total_currency = 0;
-    
-    char block[BLOCK_STR_SIZE];
-    string_block(block,&(in_chain->head->data));
-    strcpy(in_chain->last_block,block);
-
-
-
-    return in_chain;
+	blockchain_t *list=calloc(1,sizeof(*list));
+	if(list==NULL)
+	  return (NULL);
+	block_t *Genesis=calloc(1,sizeof(*Genesis));
+	 if(Genesis==NULL){
+	  	free(Genesis);
+	  	return (NULL);
+	  }
+	  list->chain=llist_create(MT_SUPPORT_TRUE);
+	  if(list->chain==NULL){
+	  	free(list);
+	  	free(Genesis);
+	  	return(NULL);
+	  }/*initializing the Genesis "block"*/
+	 Genesis->info.index=0;                                            /*info*/
+	 Genesis->info.difficulty=0;
+	 Genesis->info.timestamp=GENESIS_TIMESTAMP;
+	 Genesis->info.nonce=0;
+	memset(Genesis->info.prev_hash, 0, SHA256_DIGEST_LENGTH);
+	memcpy(&(Genesis->data.buffer), GENESIS_DATA, GENESIS_DATA_LEN);    /*data*/
+	Genesis->data.len=GENESIS_DATA_LEN;
+	memcpy(&(Genesis->hash), GENESIS_HASH, SHA256_DIGEST_LENGTH);       /*hash*/
+	if (llist_add_node(list->chain, Genesis, ADD_NODE_FRONT) == -1){
+		free(Genesis);
+		llist_destroy(list->chain, 0, NULL);
+		free(list);
+		return (NULL);
+	}
+	return (list);
 }
