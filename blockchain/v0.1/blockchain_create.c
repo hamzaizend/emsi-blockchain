@@ -1,5 +1,6 @@
 #include "blockchain.h"
-
+/* Function to create a blockchain
+*/
 blockchain_t *blockchain_create(void)
 {
 block_t const _genesis = GENESIS_BLOCK;
