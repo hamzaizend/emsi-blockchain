@@ -1,10 +1,16 @@
 #include "blockchain.h"
 
 /**
- * blockchain_destroy - a function that deletes an existing Blockchain
+ * blockchain_destroy - destroy a blockchain
+ *
+ * @blockchain: pointer to the blockchain
  */
 void blockchain_destroy(blockchain_t *blockchain)
 {
-	llist_destroy(blockchain->chain, 1, (void (*)(llist_node_t))block_destroy);
-	free(blockchain);
+	if (blockchain)
+	{
+		llist_destroy(blockchain->chain, 1, (node_dtor_t)free);
+		blockchain->chain = NULL;
+		free(blockchain);
+	}
 }
