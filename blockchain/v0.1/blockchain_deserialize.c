@@ -1,122 +1,89 @@
 #include "blockchain.h"
-/**
-*path contains the path to a file to load the Blockchain from
-*the function must return a pointer to the deserialized Blockchain upon success, or NULL upon failure
-*The format of the file to parse is described in the previous task
-*Upon any error, the function must fail and return NULL
-*/
 
+/**
+ * convert_endianness - Convert data of a block
+ * @block: block to be converted
+ */
+void convert_endianness(block_t *block)
+{
+_swap_endian(&block->info.index, sizeof(block->info.index));
+_swap_endian(&block->info.difficulty, sizeof(block->info.difficulty));
+_swap_endian(&block->info.timestamp, sizeof(block->info.timestamp));
+_swap_endian(&block->info.nonce, sizeof(block->info.nonce));
+}
+/**
+ * read_blocks - deserializes blockchain from file
+ * @fp: file that contains blockchain data
+ * @swap_endian: pointer to data to be converted
+ * @blockchain: the blockchain that will contain the blockchain
+ * @size: the size of the blockchain
+ * Return: pointer to deserialized blockchain or null
+ */
+int read_blocks(FILE *fp, uint8_t swap_endian,
+		blockchain_t *blockchain, int size)
+{
+int i;
+block_t *block;
+uint32_t data_len;
+long int genesis_size;
+genesis_size = sizeof(block->info) + sizeof(block->hash) + 20L;
+fseek(fp, genesis_size, SEEK_CUR);
+for (i = 0; i < size - 1; ++i)
+{
+block = malloc(sizeof(*block));
+if (!block)
+return (-1);
+fread(&block->info, sizeof(block->info), 1, fp);
+fread(&data_len, sizeof(data_len), 1, fp);
+if (swap_endian)
+_swap_endian(&data_len, sizeof(data_len));
+fread(&block->data.buffer, data_len, 1, fp);
+fread(&block->hash, SHA256_DIGEST_LENGTH, 1, fp);
+if (swap_endian)
+convert_endianness(block);
+block->data.len = data_len;
+*(block->data.buffer + data_len) = '\0';
+llist_add_node(blockchain->chain, block, ADD_NODE_REAR);
+}
+return (0);
+}
+
+/**
+ * blockchain_deserialize - deserializes blockchain from file
+ * @path: path to serialized blockchain file
+ * Return: pointer to deserialized blockchain or null
+ */
 blockchain_t *blockchain_deserialize(char const *path)
 {
-	int file;
-	blockchain_t *chain = NULL;
-	uint8_t endianness;
-	char buf[4096] = {0};
-	uint32_t size;
-
-	if (!path)
-		return (NULL);
-	file = open(path, O_RDONLY);
-	if (file == -1)
-		return (NULL);
-	if (read(file, buf, strlen(HBLK_MAGIC)) != strlen(HBLK_MAGIC) ||
-	    strcmp(buf, HBLK_MAGIC))
-	{
-		free(chain);
-		close(file);
-		return (NULL);
-	}
-	buf[strlen(HBLK_VERSION)] = 0;
-	if (read(file, buf, strlen(HBLK_VERSION)) != strlen(HBLK_VERSION) ||
-	    strcmp(buf, HBLK_VERSION))
-	{
-		free(chain);
-		close(file);
-		return (NULL);
-	}
-	chain = calloc(1, sizeof(*chain));
-	if (!chain)
-	{
-		free(chain);
-		close(file);
-		return (NULL);
-	}
-	if (read(file, &endianness, 1) != 1)
-	{
-		free(chain);
-		close(file);
-		return (NULL);
-	}
-	endianness = endianness != _get_endianness();
-	if (read(file, &size, 4) != 4)
-	{
-		free(chain);
-		close(file);
-		return (NULL);
-	}
-	CHECK_ENDIAN(size);
-	chain->chain = deserialize_blocks(file, size, endianness);
-	if (!chain)
-	{
-		free(chain);
-		close(file);
-		return (NULL);
-	}
-	return (close(file), chain);
-}
-llist_t *deserialize_blocks(int file, uint32_t size, uint8_t endianness)
-{
-	block_t *block;
-	llist_t *list = llist_create(MT_SUPPORT_TRUE);
-	uint32_t i = 0;
-
-	if (!list)
-		return (NULL);
-	for (i = 0; i < size; i++)
-	{
-		block = calloc(1, sizeof(*block));
-		if (!block)
-		{
-			free(block);
-			llist_destroy(list, 1, NULL);
-			return (NULL);
-		}
-		if (read(file, &(block->info), sizeof(block->info)) != sizeof(block->info))
-		{
-			free(block);
-			llist_destroy(list, 1, NULL);
-			return (NULL);
-		}
-		CHECK_ENDIAN(block->info.index);
-		CHECK_ENDIAN(block->info.difficulty);
-		CHECK_ENDIAN(block->info.timestamp);
-		CHECK_ENDIAN(block->info.nonce);
-		if (read(file, &(block->data.len), 4) != 4)
-		{
-			free(block);
-			llist_destroy(list, 1, NULL);
-			return (NULL);
-		}
-		CHECK_ENDIAN(block->data.len);
-		if (read(file, block->data.buffer, block->data.len) != block->data.len)
-		{
-			free(block);
-			llist_destroy(list, 1, NULL);
-			return (NULL);
-		}
-		if (read(file, block->hash, SHA256_DIGEST_LENGTH) !=
-		    SHA256_DIGEST_LENGTH)
-		{
-			free(block);
-			llist_destroy(list, 1, NULL);
-			return (NULL);
-		}
-		if (llist_add_node(list, block, ADD_NODE_REAR))
-		{
-			free(block);
-			llist_destroy(list, 1, NULL);
-			return (NULL);
-		}
-	}
-	return (list);
+FILE *fp;
+uint8_t hblk_magic[4];
+uint8_t hblk_version[3];
+uint8_t hblk_endian;
+int32_t hblk_blocks;
+blockchain_t *blockchain;
+int size;
+uint8_t swap_endian;
+if (!path)
+return (NULL);
+fp = fopen(path, "r");
+if (!fp)
+return (NULL);
+fread(&hblk_magic, sizeof(hblk_magic), 1, fp);
+fread(&hblk_version, sizeof(hblk_version), 1, fp);
+fread(&hblk_endian, sizeof(hblk_endian), 1, fp);
+fread(&hblk_blocks, sizeof(hblk_blocks), 1, fp);
+if (memcmp(hblk_magic, "HBLK", 4) ||
+memcmp(hblk_version, "0.1", 3))
+return (fclose(fp), NULL);
+blockchain = blockchain_create();
+if (!blockchain)
+return (fclose(fp), NULL);
+swap_endian = _get_endianness() != hblk_endian;
+size = hblk_blocks;
+if (swap_endian)
+_swap_endian(&size, sizeof(size));
+if (read_blocks(fp, swap_endian, blockchain, size) == -1)
+return (blockchain_destroy(blockchain), fclose(fp), NULL);
+fclose(fp);
+return (blockchain);
 }
