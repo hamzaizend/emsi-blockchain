@@ -29,6 +29,10 @@ blockchain_t *blockchain_create(void)
 		free(genesis);
 		return (NULL);
 	}
+/**Create a blockchain
+*The Blockchain must contain one block upon creation. 
+*This block is called the genesis Block. Its content is static
+*/
 	genesis->info.index = 0;
 	genesis->info.difficulty = 0;
 	genesis->info.timestamp = GENESIS_TIMESTAMP;
