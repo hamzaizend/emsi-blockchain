@@ -1,7 +1,5 @@
 #include "blockchain.h"
-/**
- * blockchain_create - creates a new blockchain
- */
+
 blockchain_t *blockchain_create(void)
 {
 block_t const _genesis = GENESIS_BLOCK;
