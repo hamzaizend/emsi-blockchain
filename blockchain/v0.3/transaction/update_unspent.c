@@ -6,6 +6,7 @@
  * find_unspent - finds unspent matching txo
  * @node: current node, unspent_txo_t
  * @arg: txo id
+ *
  * Return: 0 if continue else 1
  */
 int find_unspent(llist_node_t node, void *arg)
@@ -22,6 +23,7 @@ int find_unspent(llist_node_t node, void *arg)
  * @node: current node, txi
  * @idx: index of node
  * @_args: arguments
+ *
  * Return: 0 if continue else 1
  */
 int foreach_input(llist_node_t node, unsigned int idx, void *_args)
@@ -41,6 +43,7 @@ int foreach_input(llist_node_t node, unsigned int idx, void *_args)
  * @node: current node, txo
  * @idx: index of node
  * @_args: arguments
+ *
  * Return: 0 if continue else 1
  */
 int foreach_output(llist_node_t node, unsigned int idx, void *_args)
@@ -70,6 +73,7 @@ int foreach_output(llist_node_t node, unsigned int idx, void *_args)
  * @node: current node, tx
  * @idx: index of node
  * @__args: arguments
+ *
  * Return: 0 if continue else 1
  */
 int foreach_transaction(llist_node_t node, unsigned int idx, void *__args)
@@ -88,6 +92,7 @@ int foreach_transaction(llist_node_t node, unsigned int idx, void *__args)
  * @transactions: list of validate txs
  * @block_hash: hash of block containing txs
  * @all_unspent: list of all UTXOs
+ *
  * Return: new UTXO list
  */
 llist_t *update_unspent(llist_t *transactions,
