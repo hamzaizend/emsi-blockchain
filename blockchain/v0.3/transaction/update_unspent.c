@@ -1,12 +1,11 @@
 #include "transaction.h"
-#include "../provided/provided.h"
-
+/*#include "../provided/provided.h"
+ */
 
 /**
  * find_unspent - finds unspent matching txo
  * @node: current node, unspent_txo_t
  * @arg: txo id
- *
  * Return: 0 if continue else 1
  */
 int find_unspent(llist_node_t node, void *arg)
@@ -23,7 +22,6 @@ int find_unspent(llist_node_t node, void *arg)
  * @node: current node, txi
  * @idx: index of node
  * @_args: arguments
- *
  * Return: 0 if continue else 1
  */
 int foreach_input(llist_node_t node, unsigned int idx, void *_args)
@@ -43,7 +41,6 @@ int foreach_input(llist_node_t node, unsigned int idx, void *_args)
  * @node: current node, txo
  * @idx: index of node
  * @_args: arguments
- *
  * Return: 0 if continue else 1
  */
 int foreach_output(llist_node_t node, unsigned int idx, void *_args)
@@ -73,7 +70,6 @@ int foreach_output(llist_node_t node, unsigned int idx, void *_args)
  * @node: current node, tx
  * @idx: index of node
  * @__args: arguments
- *
  * Return: 0 if continue else 1
  */
 int foreach_transaction(llist_node_t node, unsigned int idx, void *__args)
@@ -96,7 +92,7 @@ int foreach_transaction(llist_node_t node, unsigned int idx, void *__args)
  * Return: new UTXO list
  */
 llist_t *update_unspent(llist_t *transactions,
-	uint8_t block_hash[SHA256_DIGEST_LENGTH], llist_t *all_unspent)
+			uint8_t block_hash[SHA256_DIGEST_LENGTH], llist_t *all_unspent)
 {
 	void *args[2] = {0};
 
